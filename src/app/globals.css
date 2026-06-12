@@ -1,26 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────────────────────────────────────────────────
+   DESIGN TOKENS — Academic Governance System
+   All tokens are defined here and mapped to Tailwind via
+   the @theme inline block below.
+───────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surface & Background */
+  --ag-surface:                    #f9f9ff;
+  --ag-surface-dim:                #d3daef;
+  --ag-surface-bright:             #f9f9ff;
+  --ag-surface-container-lowest:   #ffffff;
+  --ag-surface-container-low:      #f1f3ff;
+  --ag-surface-container:          #e9edff;
+  --ag-surface-container-high:     #e1e8fd;
+  --ag-surface-container-highest:  #dce2f7;
+  --ag-surface-variant:            #dce2f7;
+  --ag-surface-tint:               #4d44e3;
+
+  /* On-Surface */
+  --ag-on-surface:                 #141b2b;
+  --ag-on-surface-variant:         #464555;
+  --ag-inverse-surface:            #293040;
+  --ag-inverse-on-surface:         #edf0ff;
+
+  /* Background */
+  --ag-background:                 #f9f9ff;
+  --ag-on-background:              #141b2b;
+
+  /* Outline */
+  --ag-outline:                    #777587;
+  --ag-outline-variant:            #c7c4d8;
+
+  /* Primary — Indigo */
+  --ag-primary:                    #3525cd;
+  --ag-on-primary:                 #ffffff;
+  --ag-primary-container:          #4f46e5;
+  --ag-on-primary-container:       #dad7ff;
+  --ag-inverse-primary:            #c3c0ff;
+  --ag-primary-fixed:              #e2dfff;
+  --ag-primary-fixed-dim:          #c3c0ff;
+  --ag-on-primary-fixed:           #0f0069;
+  --ag-on-primary-fixed-variant:   #3323cc;
+
+  /* Secondary — Emerald */
+  --ag-secondary:                  #006c49;
+  --ag-on-secondary:               #ffffff;
+  --ag-secondary-container:        #6cf8bb;
+  --ag-on-secondary-container:     #00714d;
+  --ag-secondary-fixed:            #6ffbbe;
+  --ag-secondary-fixed-dim:        #4edea3;
+  --ag-on-secondary-fixed:         #002113;
+  --ag-on-secondary-fixed-variant: #005236;
+
+  /* Tertiary — Rose */
+  --ag-tertiary:                   #960014;
+  --ag-on-tertiary:                #ffffff;
+  --ag-tertiary-container:         #bc1d25;
+  --ag-on-tertiary-container:      #ffd0cc;
+  --ag-tertiary-fixed:             #ffdad7;
+  --ag-tertiary-fixed-dim:         #ffb3ad;
+  --ag-on-tertiary-fixed:          #410004;
+  --ag-on-tertiary-fixed-variant:  #930013;
+
+  /* Error */
+  --ag-error:                      #ba1a1a;
+  --ag-on-error:                   #ffffff;
+  --ag-error-container:            #ffdad6;
+  --ag-on-error-container:         #93000a;
+
+  /* Spacing (8px base grid) */
+  --ag-spacing-base:               8px;
+  --ag-spacing-xs:                 4px;
+  --ag-spacing-sm:                 8px;
+  --ag-spacing-md:                 16px;
+  --ag-spacing-lg:                 24px;
+  --ag-spacing-xl:                 32px;
+  --ag-spacing-gutter:             24px;
+  --ag-spacing-margin:             32px;
+  --ag-sidebar-width:              260px;
+
+  /* Border Radius */
+  --ag-radius-sm:                  0.125rem;
+  --ag-radius:                     0.25rem;
+  --ag-radius-md:                  0.375rem;
+  --ag-radius-lg:                  0.5rem;
+  --ag-radius-xl:                  0.75rem;
+  --ag-radius-full:                9999px;
+
+  /* shadcn/ui compatibility layer — mapped to AG tokens */
+  --background:             var(--ag-background);
+  --foreground:             var(--ag-on-background);
+  --card:                   var(--ag-surface-container-lowest);
+  --card-foreground:        var(--ag-on-surface);
+  --popover:                var(--ag-surface-container-lowest);
+  --popover-foreground:     var(--ag-on-surface);
+  --primary:                var(--ag-primary);
+  --primary-foreground:     var(--ag-on-primary);
+  --secondary:              var(--ag-surface-container-low);
+  --secondary-foreground:   var(--ag-on-surface);
+  --muted:                  var(--ag-surface-container);
+  --muted-foreground:       var(--ag-on-surface-variant);
+  --accent:                 var(--ag-surface-container-high);
+  --accent-foreground:      var(--ag-on-surface);
+  --destructive:            var(--ag-error);
+  --border:                 var(--ag-outline-variant);
+  --input:                  var(--ag-outline-variant);
+  --ring:                   var(--ag-primary);
+  --radius:                 var(--ag-radius-lg);
+
+  /* Chart tokens (optional semantic fill) */
+  --chart-1:  var(--ag-primary);
+  --chart-2:  var(--ag-secondary);
+  --chart-3:  var(--ag-tertiary);
+  --chart-4:  var(--ag-primary-fixed-dim);
+  --chart-5:  var(--ag-secondary-fixed-dim);
+
+  /* Sidebar */
+  --sidebar:                        var(--ag-surface-container-lowest);
+  --sidebar-foreground:             var(--ag-on-surface);
+  --sidebar-primary:                var(--ag-primary);
+  --sidebar-primary-foreground:     var(--ag-on-primary);
+  --sidebar-accent:                 var(--ag-surface-container-low);
+  --sidebar-accent-foreground:      var(--ag-on-surface-variant);
+  --sidebar-border:                 var(--ag-outline-variant);
+  --sidebar-ring:                   var(--ag-primary);
 }
 
+/* ─── Dark mode overrides ─── */
+.dark {
+  --ag-surface:                    #141b2b;
+  --ag-surface-dim:                #0e1420;
+  --ag-surface-bright:             #293040;
+  --ag-surface-container-lowest:   #0b1018;
+  --ag-surface-container-low:      #141b2b;
+  --ag-surface-container:          #1a2133;
+  --ag-surface-container-high:     #22293b;
+  --ag-surface-container-highest:  #293040;
+  --ag-surface-variant:            #464555;
+  --ag-background:                 #0e1420;
+  --ag-on-background:              #e5e7f8;
+  --ag-on-surface:                 #e5e7f8;
+  --ag-on-surface-variant:         #c7c4d8;
+  --ag-inverse-surface:            #e5e7f8;
+  --ag-inverse-on-surface:         #293040;
+  --ag-outline:                    #918fa3;
+  --ag-outline-variant:            #464555;
+
+  --background:           var(--ag-background);
+  --foreground:           var(--ag-on-background);
+  --card:                 var(--ag-surface-container);
+  --card-foreground:      var(--ag-on-surface);
+  --popover:              var(--ag-surface-container-high);
+  --popover-foreground:   var(--ag-on-surface);
+  --secondary:            var(--ag-surface-container-high);
+  --secondary-foreground: var(--ag-on-surface);
+  --muted:                var(--ag-surface-container-highest);
+  --muted-foreground:     var(--ag-on-surface-variant);
+  --accent:               var(--ag-surface-container-highest);
+  --accent-foreground:    var(--ag-on-surface);
+  --border:               var(--ag-outline-variant);
+  --input:                var(--ag-outline-variant);
+  --sidebar:              var(--ag-surface-container-low);
+  --sidebar-foreground:   var(--ag-on-surface);
+  --sidebar-border:       var(--ag-outline-variant);
+}
+
+/* ─────────────────────────────────────────────────────────
+   TAILWIND v4 THEME — Expose AG tokens as Tailwind utilities
+───────────────────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Colors ── */
+  --color-surface:                    var(--ag-surface);
+  --color-surface-dim:                var(--ag-surface-dim);
+  --color-surface-bright:             var(--ag-surface-bright);
+  --color-surface-container-lowest:   var(--ag-surface-container-lowest);
+  --color-surface-container-low:      var(--ag-surface-container-low);
+  --color-surface-container:          var(--ag-surface-container);
+  --color-surface-container-high:     var(--ag-surface-container-high);
+  --color-surface-container-highest:  var(--ag-surface-container-highest);
+  --color-surface-variant:            var(--ag-surface-variant);
+  --color-surface-tint:               var(--ag-surface-tint);
+  --color-on-surface:                 var(--ag-on-surface);
+  --color-on-surface-variant:         var(--ag-on-surface-variant);
+  --color-inverse-surface:            var(--ag-inverse-surface);
+  --color-inverse-on-surface:         var(--ag-inverse-on-surface);
+  --color-background:                 var(--ag-background);
+  --color-on-background:              var(--ag-on-background);
+  --color-outline:                    var(--ag-outline);
+  --color-outline-variant:            var(--ag-outline-variant);
+
+  --color-primary:                    var(--ag-primary);
+  --color-on-primary:                 var(--ag-on-primary);
+  --color-primary-container:          var(--ag-primary-container);
+  --color-on-primary-container:       var(--ag-on-primary-container);
+  --color-inverse-primary:            var(--ag-inverse-primary);
+  --color-primary-fixed:              var(--ag-primary-fixed);
+  --color-primary-fixed-dim:          var(--ag-primary-fixed-dim);
+  --color-on-primary-fixed:           var(--ag-on-primary-fixed);
+  --color-on-primary-fixed-variant:   var(--ag-on-primary-fixed-variant);
+
+  --color-secondary:                  var(--ag-secondary);
+  --color-on-secondary:               var(--ag-on-secondary);
+  --color-secondary-container:        var(--ag-secondary-container);
+  --color-on-secondary-container:     var(--ag-on-secondary-container);
+  --color-secondary-fixed:            var(--ag-secondary-fixed);
+  --color-secondary-fixed-dim:        var(--ag-secondary-fixed-dim);
+  --color-on-secondary-fixed:         var(--ag-on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--ag-on-secondary-fixed-variant);
+
+  --color-tertiary:                   var(--ag-tertiary);
+  --color-on-tertiary:                var(--ag-on-tertiary);
+  --color-tertiary-container:         var(--ag-tertiary-container);
+  --color-on-tertiary-container:      var(--ag-on-tertiary-container);
+  --color-tertiary-fixed:             var(--ag-tertiary-fixed);
+  --color-tertiary-fixed-dim:         var(--ag-tertiary-fixed-dim);
+  --color-on-tertiary-fixed:          var(--ag-on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant:  var(--ag-on-tertiary-fixed-variant);
+
+  --color-error:                      var(--ag-error);
+  --color-on-error:                   var(--ag-on-error);
+  --color-error-container:            var(--ag-error-container);
+  --color-on-error-container:         var(--ag-on-error-container);
+
+  /* shadcn compat */
+  --color-background:               var(--background);
+  --color-foreground:               var(--foreground);
+  --color-card:                     var(--card);
+  --color-card-foreground:          var(--card-foreground);
+  --color-popover:                  var(--popover);
+  --color-popover-foreground:       var(--popover-foreground);
+  --color-muted:                    var(--muted);
+  --color-muted-foreground:         var(--muted-foreground);
+  --color-accent:                   var(--accent);
+  --color-accent-foreground:        var(--accent-foreground);
+  --color-destructive:              var(--destructive);
+  --color-border:                   var(--border);
+  --color-input:                    var(--input);
+  --color-ring:                     var(--ring);
+  --color-chart-1:                  var(--chart-1);
+  --color-chart-2:                  var(--chart-2);
+  --color-chart-3:                  var(--chart-3);
+  --color-chart-4:                  var(--chart-4);
+  --color-chart-5:                  var(--chart-5);
+  --color-sidebar:                  var(--sidebar);
+  --color-sidebar-foreground:       var(--sidebar-foreground);
+  --color-sidebar-primary:          var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent:           var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border:           var(--sidebar-border);
+  --color-sidebar-ring:             var(--sidebar-ring);
+
+  /* ── Spacing (8px base grid) ── */
+  --spacing-xs:            var(--ag-spacing-xs);
+  --spacing-sm:            var(--ag-spacing-sm);
+  --spacing-md:            var(--ag-spacing-md);
+  --spacing-lg:            var(--ag-spacing-lg);
+  --spacing-xl:            var(--ag-spacing-xl);
+  --spacing-gutter:        var(--ag-spacing-gutter);
+  --spacing-margin:        var(--ag-spacing-margin);
+  --spacing-sidebar-width: var(--ag-sidebar-width);
+  --spacing-base:          var(--ag-spacing-base);
+
+  /* ── Border Radius ── */
+  --radius-sm:   var(--ag-radius-sm);
+  --radius:      var(--ag-radius);
+  --radius-md:   var(--ag-radius-md);
+  --radius-lg:   var(--ag-radius-lg);
+  --radius-xl:   var(--ag-radius-xl);
+  --radius-full: var(--ag-radius-full);
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', monospace;
+
+  /* Font sizes */
+  --text-headline-lg:        30px;
+  --text-headline-lg-mobile: 24px;
+  --text-headline-md:        24px;
+  --text-headline-sm:        20px;
+  --text-body-lg:            16px;
+  --text-body-md:            14px;
+  --text-label-md:           14px;
+  --text-label-sm:           12px;
+
+  /* Line heights */
+  --leading-headline-lg:        38px;
+  --leading-headline-lg-mobile: 32px;
+  --leading-headline-md:        32px;
+  --leading-headline-sm:        28px;
+  --leading-body-lg:            24px;
+  --leading-body-md:            20px;
+  --leading-label-md:           20px;
+  --leading-label-sm:           16px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Base styles ─── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  html {
+    @apply font-sans;
+  }
 }

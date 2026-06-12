@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          Role      @default(SISWA)
+  isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  accounts      Account[]
+  guru          Guru?
+  sessions      Session[]
+  siswa         Siswa?
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+model Guru {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  nip         String?     @unique
+  namaLengkap String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guruMapel   GuruMapel[]
+  waliKelas   Kelas[]     @relation("WaliKelas")
+  nilaiInput  Nilai[]
+
+  @@map("guru")
+}
+
+model Siswa {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  nis         String    @unique
+  nisn        String?   @unique
+  namaLengkap String
+  kelasId     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  nilai       Nilai[]
+  kelas       Kelas?    @relation(fields: [kelasId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("siswa")
+}
+
+model TahunAjaran {
+  id          String   @id @default(cuid())
+  namaPeriode String
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  nilai       Nilai[]
+
+  @@map("tahun_ajaran")
+}
+
+model MataPelajaran {
+  id        String      @id @default(cuid())
+  kodeMapel String      @unique
+  namaMapel String
+  kkm       Decimal     @default(70.00) @db.Decimal(5, 2)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  guruMapel GuruMapel[]
+  nilai     Nilai[]
+
+  @@map("mata_pelajaran")
+}
+
+model Kelas {
+  id          String   @id @default(cuid())
+  tingkat     String
+  namaKelas   String
+  waliKelasId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  waliKelas   Guru?    @relation("WaliKelas", fields: [waliKelasId], references: [id])
+  siswa       Siswa[]
+
+  @@map("kelas")
+}
+
+model GuruMapel {
+  guruId        String
+  mapelId       String
+  createdAt     DateTime      @default(now())
+  guru          Guru          @relation(fields: [guruId], references: [id], onDelete: Cascade)
+  mataPelajaran MataPelajaran @relation(fields: [mapelId], references: [id], onDelete: Cascade)
+
+  @@id([guruId, mapelId])
+  @@map("guru_mapel")
+}
+
+model Nilai {
+  id            String        @id @default(cuid())
+  siswaId       String
+  mapelId       String
+  guruId        String
+  tahunAjaranId String
+  nilaiTugas    Decimal       @default(0) @db.Decimal(5, 2)
+  nilaiUts      Decimal       @default(0) @db.Decimal(5, 2)
+  nilaiUas      Decimal       @default(0) @db.Decimal(5, 2)
+  nilaiAkhir    Decimal?      @db.Decimal(5, 2)
+  statusLulus   Boolean?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  guru          Guru          @relation(fields: [guruId], references: [id])
+  mataPelajaran MataPelajaran @relation(fields: [mapelId], references: [id])
+  siswa         Siswa         @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  tahunAjaran   TahunAjaran   @relation(fields: [tahunAjaranId], references: [id])
+
+  @@unique([siswaId, mapelId, tahunAjaranId])
+  @@map("nilai")
+}
+
+enum Role {
+  ADMIN
+  GURU
+  SISWA
+}
